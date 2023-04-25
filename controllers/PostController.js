@@ -13,7 +13,7 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
-export const getPost = (req, res) => {
+export const getPost = async (req, res) => {
   try {
     const postId = req.params.id;
     PostModel.findOneAndUpdate(
@@ -41,7 +41,7 @@ export const getPost = (req, res) => {
   }
 };
 
-export const deletePost = (req, res) => {
+export const deletePost = async (req, res) => {
   try {
     const postId = req.params.id;
     PostModel.findOneAndDelete({
@@ -80,6 +80,33 @@ export const createPost = async (req, res) => {
     console.log(error);
     res.status(500).json({
       message: 'Post creation failed',
+    });
+  }
+};
+
+export const updatePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    await PostModel.updateOne(
+      {
+        _id: postId,
+      },
+      {
+        title: req.body.title,
+        text: req.body.text,
+        imageUrl: req.body.imageUrl,
+        user: req.userId,
+        tags: req.body.tags,
+      },
+    );
+
+    res.json({
+      message: 'Update has been succeed',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'An error has occurred',
     });
   }
 };
