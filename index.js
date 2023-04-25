@@ -26,13 +26,15 @@ app.get('/', (req, res) => {
   });
 });
 
+// USER ROUTES
 app.post('/auth/login', loginValidation, UserController.login);
 app.post('/auth/register', registerValidation, UserController.register);
 app.get('/auth/me', checkAuth, UserController.getMe);
 
-// app.get('/posts', PostController.getAllPosts)
-// app.get('/posts/:id',PostController.getPost)
-// app.delete('/posts', PostController.deletePost);
+// POST ROUTES
+app.get('/posts', PostController.getAllPosts);
+app.get('/posts/:id', PostController.getPost);
+app.delete('/posts/:id', checkAuth, PostController.deletePost);
 // app.patch('/posts', PostController.updatePost);
 app.post('/posts', checkAuth, postCreateValidation, PostController.createPost);
 

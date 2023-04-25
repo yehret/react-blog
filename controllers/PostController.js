@@ -1,5 +1,68 @@
 import PostModel from '../models/Post.js';
 
+export const getAllPosts = async (req, res) => {
+  try {
+    const posts = await PostModel.find().populate('user').exec(); // Connection to another table;
+
+    res.json(posts);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Post creation failed',
+    });
+  }
+};
+
+export const getPost = (req, res) => {
+  try {
+    const postId = req.params.id;
+    PostModel.findOneAndUpdate(
+      {
+        _id: postId,
+      },
+      {
+        $inc: { viewsCount: 1 },
+      },
+      {
+        returnDocument: 'after',
+      },
+    ).then((doc) => {
+      if (!doc) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+
+      res.json(doc);
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Unsuccessful',
+    });
+  }
+};
+
+export const deletePost = (req, res) => {
+  try {
+    const postId = req.params.id;
+    PostModel.findOneAndDelete({
+      _id: postId,
+    }).then((doc) => {
+      if (!doc) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+
+      res.json({
+        message: 'Post has been deleted',
+      });
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Unsuccessful',
+    });
+  }
+};
+
 export const createPost = async (req, res) => {
   try {
     const doc = new PostModel({
