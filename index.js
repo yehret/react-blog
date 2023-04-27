@@ -37,7 +37,6 @@ app.get('/', (req, res) => {
   });
 });
 
-//ROUTES
 // USER ROUTES
 app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login);
 app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register);
