@@ -68,12 +68,9 @@ app.post(
   handleValidationErrors,
   PostController.createPost,
 );
-<<<<<<< HEAD
 
 // POST TAGS
 app.get('/tags', PostController.getLastTags);
-=======
->>>>>>> 05c7a2a08c17ff9486dc6a6570383a9639328cf7
 
 // UPLOAD ROUTE
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
