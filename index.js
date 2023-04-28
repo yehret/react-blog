@@ -4,7 +4,10 @@ import multer from 'multer';
 import cors from 'cors';
 
 import { registerValidation, loginValidation, postCreateValidation } from './validations.js';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 05c7a2a08c17ff9486dc6a6570383a9639328cf7
 import { handleValidationErrors, checkAuth } from './utils/index.js';
 import { UserController, PostController } from './controllers/index.js';
 
@@ -18,6 +21,7 @@ mongoose
   .catch((err) => console.log('DB error', err));
 
 const app = express();
+app.use('/uploads', express.static('uploads'));
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
@@ -40,6 +44,7 @@ app.get('/', (req, res) => {
   });
 });
 
+//ROUTES
 // USER ROUTES
 app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login);
 app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register);
@@ -63,9 +68,12 @@ app.post(
   handleValidationErrors,
   PostController.createPost,
 );
+<<<<<<< HEAD
 
 // POST TAGS
 app.get('/tags', PostController.getLastTags);
+=======
+>>>>>>> 05c7a2a08c17ff9486dc6a6570383a9639328cf7
 
 // UPLOAD ROUTE
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {

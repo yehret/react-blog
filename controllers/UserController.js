@@ -6,7 +6,13 @@ import handleValidationErrors from '../utils/handleValidationErrors.js';
 
 export const register = async (req, res) => {
   try {
-    handleValidationErrors();
+    const errors = validationResult(req);
+
+    // If Error
+    if (!errors.isEmpty()) return res.status(400).json(errors.array());
+
+    // If there is no errors
+
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
