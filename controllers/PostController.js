@@ -3,22 +3,21 @@ import UserModel from '../models/User.js';
 
 export const getAllPosts = async (req, res) => {
   try {
-    const posts = await PostModel.find()
-      .populate({
-        path: 'user',
-        select: '-passwordHash',
-      })
-      .populate({
-        path: 'comments',
-        populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
-      })
-      .exec(); // Connection to another table;   populate({ path: "user", select: ["name", "avatar"] })
+    const { sort } = req.query;
+
+    let posts;
+
+    if (sort === 'views') {
+      posts = await PostModel.find().sort({ viewsCount: -1 });
+    } else {
+      posts = await PostModel.find();
+    }
 
     res.json(posts);
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: 'Post creation failed',
+      message: 'Server error',
     });
   }
 };
@@ -55,7 +54,7 @@ export const getPost = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: 'Unsuccessful',
+      message: 'Unsuccessful action',
     });
   }
 };

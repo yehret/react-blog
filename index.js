@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
 import cors from 'cors';
+// import queryParser from 'query-parser';
 
 import { registerValidation, loginValidation, postCreateValidation } from './validations.js';
 import { handleValidationErrors, checkAuth } from './utils/index.js';
@@ -33,6 +34,7 @@ const upload = multer({ storage });
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 app.use(cors());
+// app.use(queryParser());
 
 app.get('/', (req, res) => {
   res.json({
@@ -64,7 +66,9 @@ app.post(
   handleValidationErrors,
   PostController.createPost,
 );
-app.post('/posts/:id/comment', checkAuth, PostController.addComment);
+app.post('/posts/comment/:id', checkAuth, PostController.addComment);
+// POST SORTED BY POPULAR
+app.get('/posts', PostController.getAllPosts);
 
 // POST TAGS
 app.get('/tags', PostController.getLastTags);
