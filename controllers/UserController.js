@@ -6,13 +6,14 @@ import handleValidationErrors from '../utils/handleValidationErrors.js';
 
 export const register = async (req, res) => {
   try {
-    const errors = validationResult(req);
-
-    // If Error
-    if (!errors.isEmpty()) return res.status(400).json(errors.array());
-
-    // If there is no errors
-
+    const userEmail = await UserModel.findOne({ email: req.body.email });
+    if (userEmail) {
+      if (req.body.email === userEmail.email) {
+        return res.status(400).json({
+          message: 'This email is already registered.',
+        });
+      }
+    }
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
@@ -30,7 +31,7 @@ export const register = async (req, res) => {
       {
         _id: user._id,
       },
-      'hornydog',
+      'secret123',
       {
         expiresIn: '30d',
       },
@@ -42,10 +43,10 @@ export const register = async (req, res) => {
       ...userData,
       token,
     });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
     res.status(500).json({
-      message: 'Registration failed',
+      message: 'Не удалось зарегистрироваться',
     });
   }
 };

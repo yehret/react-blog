@@ -1,8 +1,18 @@
 import PostModel from '../models/Post.js';
+import UserModel from '../models/User.js';
 
 export const getAllPosts = async (req, res) => {
   try {
-    const posts = await PostModel.find().populate('user').exec(); // Connection to another table;
+    const posts = await PostModel.find()
+      .populate({
+        path: 'user',
+        select: '-passwordHash',
+      })
+      .populate({
+        path: 'comments',
+        populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
+      })
+      .exec(); // Connection to another table;   populate({ path: "user", select: ["name", "avatar"] })
 
     res.json(posts);
   } catch (error) {
@@ -16,7 +26,7 @@ export const getAllPosts = async (req, res) => {
 export const getPost = async (req, res) => {
   try {
     const postId = req.params.id;
-    PostModel.findOneAndUpdate(
+    const post = await PostModel.findOneAndUpdate(
       {
         _id: postId,
       },
@@ -26,13 +36,22 @@ export const getPost = async (req, res) => {
       {
         returnDocument: 'after',
       },
-    ).then((doc) => {
-      if (!doc) {
-        return res.status(404).json({ message: 'Post not found' });
-      }
+    )
+      .populate({
+        path: 'user',
+        select: '-passwordHash',
+      })
+      .populate({
+        path: 'comments',
+        populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
+      })
+      .exec();
 
-      res.json(doc);
-    });
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    res.json(post);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -126,5 +145,36 @@ export const getLastTags = async (req, res) => {
     res.status(500).json({
       message: 'Post creation failed',
     });
+  }
+};
+
+export const addComment = async (req, res) => {
+  try {
+    const post = await PostModel.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    const user = await UserModel.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const comment = {
+      user: user,
+      text: req.body.text,
+    };
+
+    post.comments.unshift(comment);
+    await post.save().then((doc) =>
+      doc.populate({
+        path: 'comments',
+        populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
+      }),
+    );
+
+    res.json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
