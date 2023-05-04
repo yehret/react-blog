@@ -8,9 +8,26 @@ export const getAllPosts = async (req, res) => {
     let posts;
 
     if (sort === 'views') {
-      posts = await PostModel.find().sort({ viewsCount: -1 });
+      posts = await PostModel.find()
+        .sort({ viewsCount: -1 })
+        .populate({
+          path: 'user',
+          select: '-passwordHash',
+        })
+        .populate({
+          path: 'comments',
+          populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
+        });
     } else {
-      posts = await PostModel.find();
+      posts = await PostModel.find()
+        .populate({
+          path: 'user',
+          select: '-passwordHash',
+        })
+        .populate({
+          path: 'comments',
+          populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
+        });
     }
 
     res.json(posts);
