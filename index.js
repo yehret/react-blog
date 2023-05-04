@@ -9,16 +9,13 @@ import { handleValidationErrors, checkAuth } from './utils/index.js';
 import { UserController, PostController } from './controllers/index.js';
 
 mongoose
-  .connect(
-    'mongodb+srv://serge:R6XXezMn8BeFy5lz@cluster0.9p7ruuj.mongodb.net/?retryWrites=true&w=majority',
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('DB is connected');
   })
   .catch((err) => console.log('DB error', err));
 
 const app = express();
-app.use('/uploads', express.static('uploads'));
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
@@ -34,13 +31,6 @@ const upload = multer({ storage });
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 app.use(cors());
-// app.use(queryParser());
-
-app.get('/', (req, res) => {
-  res.json({
-    message: 'hi',
-  });
-});
 
 //ROUTES
 // USER ROUTES
@@ -80,7 +70,7 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
   });
 });
 
-app.listen(4444, (err) => {
+app.listen(process.env.POST || 4444, (err) => {
   if (err) {
     return console.log(err);
   }
