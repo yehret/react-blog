@@ -59,9 +59,9 @@ app.post(
   handleValidationErrors,
   PostController.createPost,
 );
+
+// ADD COMMENT ROUTE
 app.post('/posts/comment/:id', checkAuth, PostController.addComment);
-// POST SORTED BY POPULAR
-app.get('/posts', PostController.getAllPosts);
 
 // POST TAGS
 app.get('/tags', PostController.getLastTags);

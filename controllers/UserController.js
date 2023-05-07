@@ -31,7 +31,7 @@ export const register = async (req, res) => {
       {
         _id: user._id,
       },
-      'secret123',
+      'secret123215521kasghaliw',
       {
         expiresIn: '30d',
       },
@@ -46,7 +46,7 @@ export const register = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: 'Не удалось зарегистрироваться',
+      message: 'Registration failed',
     });
   }
 };
@@ -72,7 +72,7 @@ export const login = async (req, res) => {
       {
         _id: user._id,
       },
-      'hornydog',
+      'secret123215521kasghaliw',
       {
         expiresIn: '30d',
       },

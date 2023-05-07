@@ -7,27 +7,21 @@ export const getAllPosts = async (req, res) => {
 
     let posts;
 
+    const populates = [
+      {
+        path: 'user',
+        select: '-passwordHash',
+      },
+      {
+        path: 'comments',
+        populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
+      },
+    ];
+
     if (sort === 'views') {
-      posts = await PostModel.find()
-        .sort({ viewsCount: -1 })
-        .populate({
-          path: 'user',
-          select: '-passwordHash',
-        })
-        .populate({
-          path: 'comments',
-          populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
-        });
+      posts = await PostModel.find().sort({ viewsCount: -1 }).populate(populates);
     } else {
-      posts = await PostModel.find()
-        .populate({
-          path: 'user',
-          select: '-passwordHash',
-        })
-        .populate({
-          path: 'comments',
-          populate: { path: 'user', select: '-passwordHash -createdAt -updatedAt' },
-        });
+      posts = await PostModel.find().sort({ createdAt: -1 }).populate(populates);
     }
 
     res.json(posts);

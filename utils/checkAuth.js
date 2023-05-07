@@ -5,7 +5,7 @@ export default (req, res, next) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, 'hornydog');
+      const decoded = jwt.verify(token, 'secret123215521kasghaliw');
 
       req.userId = decoded._id;
       next();
@@ -19,6 +19,4 @@ export default (req, res, next) => {
       message: 'No permission',
     });
   }
-
-  // res.send(token);
 };
